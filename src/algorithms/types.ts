@@ -9,16 +9,22 @@ export type VisualizerType = 'bar-chart' | 'grid-2d' | 'terrain-3d' | 'primitive
 export interface GridNode {
   row: number;
   col: number;
-  isStart: boolean;
-  isEnd: boolean;
-  isWall: boolean;
-  isVisited: boolean;
-  isPath: boolean;
-  distance: number;
+  // Propiedades Pathfinding (Legacy)
+  isStart?: boolean;
+  isEnd?: boolean;
+  isWall?: boolean;
+  isVisited?: boolean;
+  isPath?: boolean;
+  distance?: number;
   previousNode?: { row: number, col: number } | null;
+  
+  // NUEVAS PROPIEDADES GENÉRICAS (Para Backtracking/Tableros)
+  value?: string | number; // Para mostrar texto (ej: "♛" o "5")
+  customBg?: string;       // Para forzar un color de fondo (ej: "#ef4444")
+  isValid?: boolean;       // Para indicar una posición confirmada
 }
-export type GridState = GridNode[][];
 
+export type GridState = GridNode[][];
 // Estructuras de Datos (Grafos/Árboles)
 export interface GraphNode {
   id: string;
