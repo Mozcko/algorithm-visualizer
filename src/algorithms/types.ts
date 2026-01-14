@@ -1,26 +1,11 @@
 // src/algorithms/types.ts
 
-// Actualizamos las categorías a Inglés
 export type AlgorithmCategory = 'Sorting' | 'Pathfinding' | 'Data Structures' | 'Backtracking';
-export type VisualizerType = 'bar-chart' | 'grid-2d' | 'terrain-3d';
+export type VisualizerType = 'bar-chart' | 'grid-2d' | 'terrain-3d' | 'primitive-graph';
 
-export interface SimulationStep<T> {
-  data: T;
-  highlightedIndices?: number[];
-  activeNode?: string | number;
-  description?: string;
-}
+// --- DEFINICIONES VISUALES ---
 
-export interface AlgorithmDefinition<T = any> {
-  id: string;
-  name: string;
-  category: AlgorithmCategory; // <--- Ahora usará los tipos en inglés
-  visualizer: VisualizerType;
-  description: string;
-  run: (input: T) => Generator<SimulationStep<T>, void, unknown>;
-  generateInput: (size?: number) => T;
-}
-
+// Pathfinding (Grid)
 export interface GridNode {
   row: number;
   col: number;
@@ -28,9 +13,72 @@ export interface GridNode {
   isEnd: boolean;
   isWall: boolean;
   isVisited: boolean;
-  isPath: boolean; // Para marcar el camino final encontrado
-  distance: number; // Para Dijkstra/A*
-  previousNode?: { row: number, col: number } | null; // Para reconstruir el camino
+  isPath: boolean;
+  distance: number;
+  previousNode?: { row: number, col: number } | null;
+}
+export type GridState = GridNode[][];
+
+// Estructuras de Datos (Grafos/Árboles)
+export interface GraphNode {
+  id: string;
+  value: string | number;
+  x: number;
+  y: number;
+  color?: string;
+  isActive?: boolean;
+}
+export interface GraphEdge {
+  from: string;
+  to: string;
+  color?: string;
+  isDirected?: boolean;
+}
+export interface GraphState {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+  isDirected?: boolean;
 }
 
-export type GridState = GridNode[][];
+// --- CORE DEL SISTEMA ---
+
+// SOLUCIÓN STRICTA:
+// Definimos que 'data' puede ser el tipo genérico T (lógico) O una representación visual.
+// Esto permite que un algoritmo <BSTNode> emita pasos visuales <GraphState> legalmente.
+export type VisualState = GraphState | GridState;
+
+export interface SimulationStep<T> {
+  data: T | VisualState; 
+  highlightedIndices?: number[];
+  activeNode?: string | number;
+  description?: string;
+}
+
+export interface AlgorithmControl {
+  type: 'button' | 'input-number';
+  label: string;
+  id: string;
+  method?: string;
+  defaultValue?: number;
+}
+
+// Interfaz Maestra (Unificada y Limpia)
+export interface AlgorithmDefinition<T = unknown> {
+  id: string;
+  name: string;
+  category: AlgorithmCategory;
+  visualizer: VisualizerType;
+  description: string;
+  
+  controls?: AlgorithmControl[];
+
+  // Métodos interactivos
+  methods?: {
+    [key: string]: (currentState: T, ...args: any[]) => Generator<SimulationStep<T>, void, unknown>;
+  };
+
+  // Método automático
+  run?: (input: T) => Generator<SimulationStep<T>, void, unknown>;
+  
+  generateInput: (size?: number) => T;
+}
