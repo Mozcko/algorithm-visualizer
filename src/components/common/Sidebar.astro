@@ -1,0 +1,54 @@
+---
+// src/components/common/Sidebar.astro
+import type { AlgorithmDefinition } from '../../algorithms/types';
+
+// 1. Escanear todos los archivos .ts dentro de algorithms
+// Nota: Astro.glob es la forma nativa de importar archivos dinámicamente
+const algorithmsImport = import.meta.glob('../../algorithms/**/*.ts', { eager: true });
+
+// 2. Procesar y Agrupar los datos
+const algorithms = Object.values(algorithmsImport)
+  .map((module: any) => module.default as AlgorithmDefinition)
+  .filter((algo) => algo && algo.category); // Filtramos archivos que no sean algoritmos (ej: types.ts)
+
+const groupedAlgorithms = algorithms.reduce((acc, algo) => {
+  if (!acc[algo.category]) acc[algo.category] = [];
+  acc[algo.category].push(algo);
+  return acc;
+}, {} as Record<string, AlgorithmDefinition[]>);
+
+const { currentId } = Astro.props;
+---
+
+<aside class="w-64 bg-slate-900 h-screen text-slate-300 flex flex-col border-r border-slate-700">
+  <div class="p-4 border-b border-slate-700 font-bold text-white tracking-wider">
+    ALGO_VISUALIZER
+  </div>
+  
+  <nav class="flex-1 overflow-y-auto py-4">
+    {Object.entries(groupedAlgorithms).map(([category, algos]) => (
+      <div class="mb-6">
+        <h3 class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">
+          {category}
+        </h3>
+        <ul>
+          {algos.map((algo) => (
+            <li>
+              <a 
+                href={`/${algo.category.toLowerCase()}/${algo.id}`}
+                class:list={[
+                  "block px-4 py-2 text-sm hover:bg-slate-800 hover:text-white transition-colors border-l-2",
+                  algo.id === currentId 
+                    ? "border-blue-500 bg-slate-800 text-white" 
+                    : "border-transparent"
+                ]}
+              >
+                {algo.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </nav>
+</aside>
