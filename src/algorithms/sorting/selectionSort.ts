@@ -1,4 +1,3 @@
-// src/algorithms/sorting/selectionSort.ts
 import type { AlgorithmDefinition } from '../types';
 
 const selectionSort: AlgorithmDefinition<number[]> = {
@@ -6,40 +5,35 @@ const selectionSort: AlgorithmDefinition<number[]> = {
   name: 'Selection Sort',
   category: 'Sorting',
   visualizer: 'bar-chart',
-  description: 'Divides the input list into two parts: a sorted sublist of items which is built up from left to right and a sublist of the remaining unsorted items.',
+  description: 'Sorts an array by repeatedly finding the minimum element from the unsorted part and putting it at the beginning.',
   
   generateInput: (size = 20) => Array.from({ length: size }, () => Math.floor(Math.random() * 80) + 10),
   
-  run: function* (input) {
+  run: function* (input: number[]) {
     let arr = [...input];
     let n = arr.length;
 
-    yield { data: [...arr], description: 'Starting Selection Sort' };
+    yield { 
+        data: [...arr], 
+        description: 'Starting: Unsorted array' 
+    };
 
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i < n - 1; i++) {
       let minIdx = i;
       
-      // Highlight the current position we are looking to fill
-      yield { 
-        data: [...arr], 
-        highlightedIndices: [i], 
-        description: `Looking for minimum value starting from index ${i}` 
-      };
-
       for (let j = i + 1; j < n; j++) {
-        // Highlight current minimum found vs current check
-        yield {
-          data: [...arr],
-          highlightedIndices: [minIdx, j],
-          description: `Comparing current min ${arr[minIdx]} with ${arr[j]}`
+        yield { 
+            data: [...arr], 
+            highlightedIndices: [j, minIdx], 
+            description: `Comparing ${arr[j]} with current minimum ${arr[minIdx]}` 
         };
 
         if (arr[j] < arr[minIdx]) {
           minIdx = j;
-          yield {
-            data: [...arr],
-            highlightedIndices: [minIdx],
-            description: `New minimum found: ${arr[minIdx]}`
+          yield { 
+            data: [...arr], 
+            highlightedIndices: [minIdx], 
+            description: `New minimum found: ${arr[minIdx]}` 
           };
         }
       }
@@ -48,16 +42,20 @@ const selectionSort: AlgorithmDefinition<number[]> = {
         let temp = arr[i];
         arr[i] = arr[minIdx];
         arr[minIdx] = temp;
-        
-        yield {
-          data: [...arr],
-          highlightedIndices: [i, minIdx],
-          description: `Swapped minimum ${arr[i]} to correct position`
+
+        yield { 
+            data: [...arr], 
+            highlightedIndices: [i, minIdx], 
+            description: `Swapping minimum ${arr[i]} with ${arr[minIdx]}` 
         };
       }
     }
 
-    yield { data: [...arr], highlightedIndices: [], description: 'Sorted!' };
+    yield { 
+        data: [...arr], 
+        highlightedIndices: [], 
+        description: 'Sorting completed!' 
+    };
   }
 };
 

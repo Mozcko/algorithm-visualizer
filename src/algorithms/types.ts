@@ -1,6 +1,6 @@
 // src/algorithms/types.ts
 
-export type AlgorithmCategory = 'Sorting' | 'Pathfinding' | 'Data Structures' | 'Backtracking';
+export type AlgorithmCategory = 'Sorting' | 'Pathfinding' | 'Data Structures' | 'Backtracking' | 'Shuffling';
 export type VisualizerType = 'bar-chart' | 'grid-2d' | 'terrain-3d' | 'primitive-graph';
 
 // --- DEFINICIONES VISUALES ---
