@@ -20,3 +20,17 @@ export interface AlgorithmDefinition<T = any> {
   run: (input: T) => Generator<SimulationStep<T>, void, unknown>;
   generateInput: (size?: number) => T;
 }
+
+export interface GridNode {
+  row: number;
+  col: number;
+  isStart: boolean;
+  isEnd: boolean;
+  isWall: boolean;
+  isVisited: boolean;
+  isPath: boolean; // Para marcar el camino final encontrado
+  distance: number; // Para Dijkstra/A*
+  previousNode?: { row: number, col: number } | null; // Para reconstruir el camino
+}
+
+export type GridState = GridNode[][];

@@ -4,6 +4,8 @@ import type { AlgorithmDefinition } from '../algorithms/types';
 import { useAlgorithmRunner } from '../hooks/useAlgorithmRunner';
 import { Controls } from './common/Controls';
 import { loadAlgorithm } from '../utils/algorithmLoader'; // <--- Importamos el loader
+import { Grid2D } from './renderers/Grid2D';
+import type { GridState } from '../algorithms/types'; // Importa el tipo
 
 // --- Visualizador Temporal ---
 const BarChartRenderer = ({ data, active }: { data: number[]; active?: number[] }) => (
@@ -60,6 +62,10 @@ function RunnerInternal({ algorithm }: { algorithm: AlgorithmDefinition }) {
             data={currentStep.data as number[]} 
             active={currentStep.highlightedIndices} 
           />
+        )}
+
+        {algorithm.visualizer === 'grid-2d' && (
+            <Grid2D grid={currentStep.data as GridState} />
         )}
         
         {algorithm.visualizer !== 'bar-chart' && (
