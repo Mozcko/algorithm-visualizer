@@ -6,6 +6,7 @@ import { Controls } from './common/Controls';
 import { loadAlgorithm } from '../utils/algorithmLoader';
 import { Grid2D } from './renderers/Grid2D';
 import { GraphRenderer } from './renderers/GraphRenderer';
+import { Terrain3D } from './renderers/Terrain3D'; // Import it
 
 // --- Type Guards (Validaciones de seguridad) ---
 // Estas funciones comprueban si 'data' tiene la forma correcta antes de intentar dibujarlo.
@@ -111,8 +112,16 @@ function RunnerInternal({ algorithm }: { algorithm: AlgorithmDefinition }) {
                </div>
         )}
 
+        {/* 4. NEW: Terrain 3D */}
+        {algorithm.visualizer === 'terrain-3d' && (
+           // Check if data is a 2D array of numbers
+           (Array.isArray(data) && Array.isArray(data[0]) && typeof data[0][0] === 'number')
+            ? <Terrain3D terrain={data as number[][]} />
+            : <div className="text-slate-500">Generating Terrain Map...</div>
+        )}
+
         {/* 4. Fallback para errores de configuración */}
-        {!['bar-chart', 'grid-2d', 'primitive-graph'].includes(algorithm.visualizer) && (
+        {!['bar-chart', 'grid-2d', 'primitive-graph', 'terrain-3d'].includes(algorithm.visualizer) && (
            <div className="text-center">
              <p className="text-red-400 font-bold mb-2">Visualizador no encontrado</p>
              <p className="text-slate-500 text-sm">
