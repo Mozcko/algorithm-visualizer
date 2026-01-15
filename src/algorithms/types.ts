@@ -1,6 +1,6 @@
 // src/algorithms/types.ts
 
-export type AlgorithmCategory = 'Sorting' | 'Pathfinding' | 'Data Structures' | 'Backtracking' | 'Shuffling' | 'Terrain';
+export type AlgorithmCategory = 'Sorting' | 'Pathfinding' | 'Data Structures' | 'Backtracking' | 'Shuffling' | 'Terrain' | 'Greedy';
 export type VisualizerType = 'bar-chart' | 'grid-2d' | 'terrain-3d' | 'primitive-graph';
 
 // --- DEFINICIONES VISUALES ---
@@ -39,6 +39,7 @@ export interface GraphEdge {
   to: string;
   color?: string;
   isDirected?: boolean;
+  weight?: number;
 }
 export interface GraphState {
   nodes: GraphNode[];

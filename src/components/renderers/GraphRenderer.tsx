@@ -1,4 +1,3 @@
-// src/components/renderers/GraphRenderer.tsx
 import React from 'react';
 import type { GraphState } from '../../algorithms/types';
 
@@ -13,58 +12,86 @@ export const GraphRenderer: React.FC<Props> = ({ data }) => {
 
   return (
     <div className="w-full h-full bg-slate-900 rounded-lg overflow-hidden flex items-center justify-center">
-      {/* viewBox="0 0 800 400":
-         Define un lienzo virtual de 800 unidades de ancho x 400 de alto.
-         Esto nos da mucha más resolución que el 100x100 anterior.
-      */}
       <svg 
         className="w-full h-full max-w-4xl" 
         viewBox="0 0 800 400" 
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
-          {/* Marcador para las flechas (Grafo Dirigido) */}
           <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="28" refY="3.5" orient="auto">
             <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
           </marker>
         </defs>
 
-        {/* 1. DIBUJAR ARISTAS (Líneas) - Van detrás */}
+        {/* 1. EDGES (Lines) */}
         {edges.map((edge, idx) => {
           const fromNode = nodes.find(n => n.id === edge.from);
           const toNode = nodes.find(n => n.id === edge.to);
           
           if (!fromNode || !toNode) return null;
 
+          // Calculate Midpoint for the label
+          const midX = (fromNode.x + toNode.x) / 2;
+          const midY = (fromNode.y + toNode.y) / 2;
+
           return (
-            <line
-              key={`edge-${idx}`}
-              x1={fromNode.x} y1={fromNode.y}
-              x2={toNode.x} y2={toNode.y}
-              stroke={edge.color || "#475569"}
-              strokeWidth="2"
-              markerEnd={edge.isDirected || isDirected ? "url(#arrowhead)" : undefined}
-            />
+            <g key={`edge-${idx}`}>
+                {/* The Line */}
+                <line
+                    className="transition-all duration-500 ease-in-out"
+                    x1={fromNode.x} y1={fromNode.y}
+                    x2={toNode.x} y2={toNode.y}
+                    stroke={edge.color || "#475569"}
+                    strokeWidth={edge.color === '#22c55e' ? "4" : "2"} // Thicker if active/green
+                    markerEnd={edge.isDirected || isDirected ? "url(#arrowhead)" : undefined}
+                    strokeDasharray={edge.color === '#fbbf24' ? "5,5" : "0"} // Dashed if 'checking' (Yellow)
+                />
+                
+                {/* The Weight Label (Cost) */}
+                {edge.weight !== undefined && (
+                    <g className="animate-pop">
+                        {/* Background box for readability */}
+                        <rect 
+                            x={midX - 10} y={midY - 10} 
+                            width="20" height="20" 
+                            rx="4" fill="#0f172a" 
+                            className="stroke-slate-700" strokeWidth="1"
+                        />
+                        <text 
+                            x={midX} y={midY} 
+                            dy=".35em" 
+                            textAnchor="middle" 
+                            className="fill-slate-300 text-[10px] font-mono font-bold select-none"
+                        >
+                            {edge.weight}
+                        </text>
+                    </g>
+                )}
+            </g>
           );
         })}
 
-        {/* 2. DIBUJAR NODOS (Círculos) - Van enfrente */}
+        {/* 2. NODES (Routers) */}
         {nodes.map((node) => (
-          <g key={node.id} className="transition-all duration-500 ease-in-out" style={{ transform: `translate(${node.x}px, ${node.y}px)` }}>
-            {/* El nodo ahora se mueve con 'transform', es más suave */}
-            
-            {/* Círculo base */}
+          <g 
+            key={node.id} 
+            className="transition-spring"
+            style={{ transform: `translate(${node.x}px, ${node.y}px)` }}
+          >
+            {/* Outer Glow for Source Router */}
+            {node.color === '#22c55e' && (
+                <circle r="28" className="fill-green-500/20 animate-pulse" />
+            )}
+
             <circle
-              r="20" // Radio fijo en unidades del viewBox
+              r="20"
               className={`
-                fill-slate-800 stroke-2 transition-colors duration-300
-                ${node.isActive ? 'stroke-yellow-400 stroke-[3px]' : 'stroke-blue-500'}
-                ${node.color ? '' : 'stroke-blue-500'} 
+                fill-slate-800 transition-all duration-300
+                ${node.isActive ? 'stroke-[3px] scale-110' : 'stroke-2 scale-100'} 
               `}
-              style={{ stroke: node.color }} // Override directo si viene color
+              stroke={node.color || (node.isActive ? '#fbbf24' : '#3b82f6')}
             />
             
-            {/* Valor del texto */}
             <text
               dy=".3em"
               textAnchor="middle"
