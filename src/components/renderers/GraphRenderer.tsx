@@ -1,3 +1,4 @@
+// src/components/renderers/GraphRenderer.tsx
 import React from 'react';
 import type { GraphState } from '../../algorithms/types';
 
@@ -11,8 +12,11 @@ export const GraphRenderer: React.FC<Props> = ({ data }) => {
   const { nodes, edges, isDirected } = data;
 
   return (
-    <div className="w-full h-full bg-slate-900 rounded-lg overflow-hidden flex items-center justify-center">
+    // CHANGED: Removed overflow-auto.
+    <div className="w-full h-full bg-slate-900 rounded-lg flex items-center justify-center relative p-2">
       <svg 
+        // CHANGED: Removed 'min-w-[600px]'. Now it's just 100% width/height.
+        // The viewBox ensures it scales proportionally (content-fit).
         className="w-full h-full max-w-4xl" 
         viewBox="0 0 800 400" 
         preserveAspectRatio="xMidYMid meet"
@@ -23,34 +27,30 @@ export const GraphRenderer: React.FC<Props> = ({ data }) => {
           </marker>
         </defs>
 
-        {/* 1. EDGES (Lines) */}
+        {/* 1. EDGES */}
         {edges.map((edge, idx) => {
           const fromNode = nodes.find(n => n.id === edge.from);
           const toNode = nodes.find(n => n.id === edge.to);
           
           if (!fromNode || !toNode) return null;
 
-          // Calculate Midpoint for the label
           const midX = (fromNode.x + toNode.x) / 2;
           const midY = (fromNode.y + toNode.y) / 2;
 
           return (
             <g key={`edge-${idx}`}>
-                {/* The Line */}
                 <line
                     className="transition-all duration-500 ease-in-out"
                     x1={fromNode.x} y1={fromNode.y}
                     x2={toNode.x} y2={toNode.y}
                     stroke={edge.color || "#475569"}
-                    strokeWidth={edge.color === '#22c55e' ? "4" : "2"} // Thicker if active/green
+                    strokeWidth={edge.color === '#22c55e' ? "4" : "2"}
                     markerEnd={edge.isDirected || isDirected ? "url(#arrowhead)" : undefined}
-                    strokeDasharray={edge.color === '#fbbf24' ? "5,5" : "0"} // Dashed if 'checking' (Yellow)
+                    strokeDasharray={edge.color === '#fbbf24' ? "5,5" : "0"}
                 />
                 
-                {/* The Weight Label (Cost) */}
                 {edge.weight !== undefined && (
                     <g className="animate-pop">
-                        {/* Background box for readability */}
                         <rect 
                             x={midX - 10} y={midY - 10} 
                             width="20" height="20" 
@@ -71,14 +71,13 @@ export const GraphRenderer: React.FC<Props> = ({ data }) => {
           );
         })}
 
-        {/* 2. NODES (Routers) */}
+        {/* 2. NODES */}
         {nodes.map((node) => (
           <g 
             key={node.id} 
             className="transition-spring"
             style={{ transform: `translate(${node.x}px, ${node.y}px)` }}
           >
-            {/* Outer Glow for Source Router */}
             {node.color === '#22c55e' && (
                 <circle r="28" className="fill-green-500/20 animate-pulse" />
             )}

@@ -1,16 +1,14 @@
 // src/components/AlgorithmRunner.tsx
 import React, { useState, useEffect } from 'react';
-import type { AlgorithmDefinition, GridState, GraphState, SimulationStep } from '../algorithms/types';
+import type { AlgorithmDefinition, GridState, GraphState } from '../algorithms/types';
 import { useAlgorithmRunner } from '../hooks/useAlgorithmRunner';
 import { Controls } from './common/Controls';
 import { loadAlgorithm } from '../utils/algorithmLoader';
 import { Grid2D } from './renderers/Grid2D';
 import { GraphRenderer } from './renderers/GraphRenderer';
-import { Terrain3D } from './renderers/Terrain3D'; // Import it
+import { Terrain3D } from './renderers/Terrain3D';
 
 // --- Type Guards (Validaciones de seguridad) ---
-// Estas funciones comprueban si 'data' tiene la forma correcta antes de intentar dibujarlo.
-
 function isGraphState(data: any): data is GraphState {
   return data && Array.isArray(data.nodes) && Array.isArray(data.edges);
 }
@@ -83,10 +81,12 @@ function RunnerInternal({ algorithm }: { algorithm: AlgorithmDefinition }) {
   const { data } = currentStep;
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    // Responsive Gap: gap-4 on mobile, gap-6 on larger screens
+    <div className="w-full flex flex-col gap-4 sm:gap-6">
       
       {/* --- AREA DE VISUALIZACIÓN --- */}
-      <div className="w-full aspect-video bg-slate-900 rounded-lg border border-slate-800 flex flex-col items-center justify-center relative overflow-hidden p-4 shadow-inner">
+      {/* Responsive Aspect Ratio: aspect-square (mobile) -> aspect-video (desktop) */}
+      <div className="w-full aspect-square md:aspect-video bg-slate-900 rounded-lg border border-slate-800 flex flex-col items-center justify-center relative overflow-hidden p-2 sm:p-4 shadow-inner">
         
         {/* 1. Sorting (Bar Chart) */}
         {algorithm.visualizer === 'bar-chart' && (
@@ -107,20 +107,18 @@ function RunnerInternal({ algorithm }: { algorithm: AlgorithmDefinition }) {
             isGraphState(data)
              ? <GraphRenderer data={data} />
              : <div className="text-slate-500 text-sm">
-                 {/* Si el algoritmo envía el estado lógico (objeto) en vez del visual, mostramos esto para no romper la app */}
                  Procesando estructura...
                </div>
         )}
 
-        {/* 4. NEW: Terrain 3D */}
+        {/* 4. Terrain 3D */}
         {algorithm.visualizer === 'terrain-3d' && (
-           // Check if data is a 2D array of numbers
            (Array.isArray(data) && Array.isArray(data[0]) && typeof data[0][0] === 'number')
             ? <Terrain3D terrain={data as number[][]} />
             : <div className="text-slate-500">Generating Terrain Map...</div>
         )}
 
-        {/* 4. Fallback para errores de configuración */}
+        {/* Fallback */}
         {!['bar-chart', 'grid-2d', 'primitive-graph', 'terrain-3d'].includes(algorithm.visualizer) && (
            <div className="text-center">
              <p className="text-red-400 font-bold mb-2">Visualizador no encontrado</p>
@@ -146,7 +144,6 @@ function RunnerInternal({ algorithm }: { algorithm: AlgorithmDefinition }) {
         speed={speed}
         onSpeedChange={setSpeed}
         stepCount={stepCount}
-        // Pasamos los controles personalizados y el ejecutor de comandos
         customControls={algorithm.controls}
         onCommand={runCommand}
       />

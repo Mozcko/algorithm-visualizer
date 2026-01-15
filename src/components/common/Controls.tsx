@@ -6,7 +6,6 @@ interface ControlsProps {
   isPlaying: boolean;
   onTogglePlay: () => void;
   onNext: () => void;
-  // CORRECCIÓN AQUÍ: Permitimos un argumento opcional
   onReset: (arg?: any) => void; 
   speed: number;
   onSpeedChange: (val: number) => void;
@@ -21,7 +20,6 @@ export const Controls: React.FC<ControlsProps> = ({
   isPlaying, onTogglePlay, onNext, onReset, speed, onSpeedChange, stepCount,
   customControls, onCommand
 }) => {
-  // Estado local para los inputs numéricos (ej: valor a insertar)
   const [inputValues, setInputValues] = useState<Record<string, number>>({});
 
   const handleInputChange = (id: string, val: string) => {
@@ -41,8 +39,8 @@ export const Controls: React.FC<ControlsProps> = ({
                             key={ctrl.id}
                             type="number"
                             placeholder={ctrl.label}
-                            className="bg-slate-800 text-white px-3 py-1 rounded border border-slate-600 w-24 text-sm focus:border-blue-500 outline-none"
-                            // Usamos defaultValue si el estado está vacío inicialmente
+                            // Responsive width: full on mobile, fixed on desktop
+                            className="bg-slate-800 text-white px-3 py-2 sm:py-1 rounded border border-slate-600 w-full sm:w-24 text-sm focus:border-blue-500 outline-none"
                             value={inputValues[ctrl.id] !== undefined ? inputValues[ctrl.id] : (ctrl.defaultValue ?? '')}
                             onChange={(e) => handleInputChange(ctrl.id, e.target.value)}
                         />
@@ -53,15 +51,12 @@ export const Controls: React.FC<ControlsProps> = ({
                        <button
                            key={ctrl.id}
                            onClick={() => {
-                               // Lógica simple: Si el botón es "Insert", busca el input "value"
-                               // En un futuro podríamos hacer esto más dinámico buscando inputs vinculados
                                const val = inputValues['value']; 
-                               // Si no hay valor, usamos uno random o default
                                const arg = val !== undefined ? val : Math.floor(Math.random() * 100);
                                onCommand?.(ctrl.method!, [arg]);
                            }}
                            disabled={isPlaying}
-                           className="px-3 py-1 bg-blue-700 hover:bg-blue-600 text-white text-sm rounded border border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                           className="flex-1 sm:flex-none px-3 py-2 sm:py-1 bg-blue-700 hover:bg-blue-600 text-white text-sm rounded border border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                        >
                            {ctrl.label}
                        </button>
@@ -72,13 +67,14 @@ export const Controls: React.FC<ControlsProps> = ({
         </div>
       )}
 
-      {/* 2. CONTROLES DE REPRODUCCIÓN ESTÁNDAR (Play, Step, Reset, Speed) */}
-      <div className="flex items-center gap-4 bg-slate-800 p-3 rounded-lg border border-slate-700 text-sm">
+      {/* 2. CONTROLES DE REPRODUCCIÓN ESTÁNDAR */}
+      {/* Flex-wrap allows content to flow on small screens */}
+      <div className="flex flex-wrap items-center gap-2 sm:gap-4 bg-slate-800 p-2 sm:p-3 rounded-lg border border-slate-700 text-sm">
         
-        {/* Botón Play/Pause */}
+        {/* Botón Play/Pause - Grows on mobile */}
         <button
           onClick={onTogglePlay}
-          className={`px-4 py-2 rounded font-bold transition-colors ${
+          className={`flex-1 sm:flex-none px-4 py-2 rounded font-bold transition-colors shadow-sm ${
             isPlaying 
               ? 'bg-amber-600 hover:bg-amber-500 text-white' 
               : 'bg-green-600 hover:bg-green-500 text-white'
@@ -87,34 +83,33 @@ export const Controls: React.FC<ControlsProps> = ({
           {isPlaying ? 'PAUSE' : 'PLAY'}
         </button>
 
-        {/* Botón Step Forward */}
+        {/* Botón Step Forward - Grows on mobile */}
         <button
             onClick={onNext}
             disabled={isPlaying}
-            className="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded disabled:opacity-50 text-white transition-colors"
+            className="flex-1 sm:flex-none px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded disabled:opacity-50 text-white transition-colors border border-slate-600"
             title="Avanzar un paso"
         >
             Step &rarr;
         </button>
 
-        {/* Botón Reset */}
+        {/* Botón Reset - Pushed to right on desktop */}
         <button
             onClick={() => {
-                // Enviar el primer valor del input (ej: 'n' para N-Queens) si existe
-                // Esto permite reiniciar N-Queens con un tamaño diferente
                 const values = Object.values(inputValues);
                 onReset(values.length > 0 ? values[0] : undefined);
             }}
-            className="px-3 py-2 bg-red-900/50 hover:bg-red-800 text-red-200 border border-red-800 rounded transition-colors"
+            className="px-3 py-2 bg-red-900/50 hover:bg-red-800 text-red-200 border border-red-800 rounded transition-colors ml-auto sm:ml-0"
         >
             Reset
         </button>
 
+        {/* Separator - Hidden on mobile */}
         <div className="w-px h-8 bg-slate-600 mx-2 hidden sm:block"></div>
 
-        {/* Slider de Velocidad */}
-        <div className="hidden sm:flex items-center gap-2">
-            <span className="text-slate-400">Speed:</span>
+        {/* Slider de Velocidad - Full width on new line for mobile */}
+        <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0 pt-2 sm:pt-0 border-t border-slate-700 sm:border-t-0">
+            <span className="text-slate-400 text-xs sm:text-sm">Speed:</span>
             <input
                 type="range"
                 min="50"
@@ -122,15 +117,20 @@ export const Controls: React.FC<ControlsProps> = ({
                 step="50"
                 value={1050 - speed} 
                 onChange={(e) => onSpeedChange(1050 - Number(e.target.value))}
-                className="w-24 accent-blue-500 cursor-pointer"
+                className="flex-1 h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-500"
                 title="Ajustar velocidad de animación"
             />
         </div>
 
-        {/* Contador de Pasos */}
-        <div className="ml-auto text-slate-500 font-mono text-xs sm:text-sm">
+        {/* Contador de Pasos (Desktop) */}
+        <div className="hidden sm:block ml-auto text-slate-500 font-mono text-xs sm:text-sm">
             Steps: <span className="text-blue-400">{stepCount}</span>
         </div>
+      </div>
+
+      {/* Contador de Pasos (Mobile only) */}
+      <div className="sm:hidden text-center text-slate-500 font-mono text-xs">
+         Step: <span className="text-blue-400">{stepCount}</span>
       </div>
     </div>
   );
