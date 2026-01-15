@@ -6,7 +6,8 @@ interface ControlsProps {
   isPlaying: boolean;
   onTogglePlay: () => void;
   onNext: () => void;
-  onReset: () => void;
+  // CORRECCIÓN AQUÍ: Permitimos un argumento opcional
+  onReset: (arg?: any) => void; 
   speed: number;
   onSpeedChange: (val: number) => void;
   stepCount: number;
@@ -41,9 +42,9 @@ export const Controls: React.FC<ControlsProps> = ({
                             type="number"
                             placeholder={ctrl.label}
                             className="bg-slate-800 text-white px-3 py-1 rounded border border-slate-600 w-24 text-sm focus:border-blue-500 outline-none"
-                            value={inputValues[ctrl.id] !== undefined ? inputValues[ctrl.id] : ''}
+                            // Usamos defaultValue si el estado está vacío inicialmente
+                            value={inputValues[ctrl.id] !== undefined ? inputValues[ctrl.id] : (ctrl.defaultValue ?? '')}
                             onChange={(e) => handleInputChange(ctrl.id, e.target.value)}
-                            defaultValue={ctrl.defaultValue}
                         />
                     );
                 }
@@ -86,7 +87,7 @@ export const Controls: React.FC<ControlsProps> = ({
           {isPlaying ? 'PAUSE' : 'PLAY'}
         </button>
 
-        {/* Botón Step Forward (Este faltaba) */}
+        {/* Botón Step Forward */}
         <button
             onClick={onNext}
             disabled={isPlaying}
@@ -98,7 +99,12 @@ export const Controls: React.FC<ControlsProps> = ({
 
         {/* Botón Reset */}
         <button
-            onClick={onReset}
+            onClick={() => {
+                // Enviar el primer valor del input (ej: 'n' para N-Queens) si existe
+                // Esto permite reiniciar N-Queens con un tamaño diferente
+                const values = Object.values(inputValues);
+                onReset(values.length > 0 ? values[0] : undefined);
+            }}
             className="px-3 py-2 bg-red-900/50 hover:bg-red-800 text-red-200 border border-red-800 rounded transition-colors"
         >
             Reset
@@ -106,7 +112,7 @@ export const Controls: React.FC<ControlsProps> = ({
 
         <div className="w-px h-8 bg-slate-600 mx-2 hidden sm:block"></div>
 
-        {/* Slider de Velocidad (Este también faltaba) */}
+        {/* Slider de Velocidad */}
         <div className="hidden sm:flex items-center gap-2">
             <span className="text-slate-400">Speed:</span>
             <input
@@ -114,8 +120,6 @@ export const Controls: React.FC<ControlsProps> = ({
                 min="50"
                 max="1000"
                 step="50"
-                // Invertimos el valor: 1000 es lento, 50 es rápido.
-                // En la UI queremos que Derecha sea rápido.
                 value={1050 - speed} 
                 onChange={(e) => onSpeedChange(1050 - Number(e.target.value))}
                 className="w-24 accent-blue-500 cursor-pointer"

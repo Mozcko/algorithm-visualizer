@@ -20,33 +20,34 @@ export function useAlgorithmRunner<T>(algorithm: AlgorithmDefinition<T>) {
   const logicalStateRef = useRef<T | null>(null);
 
   // --- Inicialización / Reset ---
-  const reset = useCallback(() => {
-    // 1. Detener cualquier reproducción
+  // AHORA: Acepta argumentos opcionales (ej: el tamaño N del tablero)
+  const reset = useCallback((...args: any[]) => {
+    // 1. Detener reproducción
     if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
     }
     setIsPlaying(false);
     
-    // 2. Generar el estado inicial fresco
-    const initialData = algorithm.generateInput();
-    logicalStateRef.current = initialData; // Guardamos el estado lógico base
+    // 2. Generar estado inicial
+    // AJUSTE CLAVE: Pasamos los argumentos a generateInput
+    // Si args está vacío, el algoritmo usará sus valores por defecto (ej: size=4)
+    const initialData = algorithm.generateInput(...args);
+    
+    logicalStateRef.current = initialData; 
 
-    // 3. Configurar el generador
-    // Si tiene un método 'run' automático (Sorting/Pathfinding), lo iniciamos
+    // 3. Configurar generador
     if (algorithm.run) {
       generatorRef.current = algorithm.run(initialData);
       
-      // Ejecutamos el primer paso inmediatamente para que se vea algo
       const first = generatorRef.current.next();
       if (!first.done) {
           setCurrentStep(first.value);
       }
     } else {
-      // Modo Interactivo (Estructuras de Datos): Solo mostramos el estado inicial
-      // Creamos un paso "falso" de inicio
+      // Modo Interactivo
       setCurrentStep({ 
-          data: initialData, // Puede ser null o un objeto vacío
+          data: initialData, 
           description: 'Ready' 
       });
       generatorRef.current = null;
