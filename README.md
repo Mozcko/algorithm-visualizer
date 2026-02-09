@@ -9,7 +9,6 @@
 > Construido con rendimiento y mantenibilidad en mente.
 
 ![Demo Preview](public/demo-placeholder.gif)
-*(¡Reemplaza esto con un GIF de tu visualizador funcionando!)*
 
 ## ✨ Características Principales
 
