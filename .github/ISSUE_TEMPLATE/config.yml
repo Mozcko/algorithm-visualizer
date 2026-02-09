@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 💬 Questions & Discussions
+    url: https://github.com/TU_USUARIO/algorithm-visualizer/discussions
+    about: Please use this for general questions and discussions, not for bug reports.
