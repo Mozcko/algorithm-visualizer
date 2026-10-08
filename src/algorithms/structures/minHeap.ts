@@ -141,8 +141,8 @@ const minHeap: AlgorithmDefinition<GraphState> = {
     // Sift Down
     let curr = 0;
     while (true) {
-        let left = 2 * curr + 1;
-        let right = 2 * curr + 2;
+        const left = 2 * curr + 1;
+        const right = 2 * curr + 2;
         let smallest = curr;
 
         // Check Left

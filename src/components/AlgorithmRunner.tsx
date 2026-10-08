@@ -1,23 +1,16 @@
 // src/components/AlgorithmRunner.tsx
 import React, { useState, useEffect } from 'react';
-import type { AlgorithmDefinition, GridState, GraphState } from '../algorithms/types';
+import type { AlgorithmDefinition } from '../algorithms/types';
 import { useAlgorithmRunner } from '../hooks/useAlgorithmRunner';
 import { Controls } from './common/Controls';
 import { loadAlgorithm } from '../utils/algorithmLoader';
+import { isGraphState, isGridState } from '../utils/stateGuards';
 import { Grid2D } from './renderers/Grid2D';
 import { GraphRenderer } from './renderers/GraphRenderer';
 import { Terrain3D } from './renderers/Terrain3D';
 
 // --- Type Guards (Validaciones de seguridad) ---
-function isGraphState(data: any): data is GraphState {
-  return data && Array.isArray(data.nodes) && Array.isArray(data.edges);
-}
-
-function isGridState(data: any): data is GridState {
-  return Array.isArray(data) && Array.isArray(data[0]) && 'row' in data[0][0];
-}
-
-function isNumberArray(data: any): data is number[] {
+function isNumberArray(data: unknown): data is number[] {
   return Array.isArray(data) && typeof data[0] === 'number';
 }
 
@@ -45,22 +38,33 @@ interface Props {
 }
 
 export default function AlgorithmRunner({ algorithmId }: Props) {
-  const [algorithm, setAlgorithm] = useState<AlgorithmDefinition | null>(null);
+  // Guardamos el id junto al resultado para distinguir "cargando" de "no encontrado"
+  const [loaded, setLoaded] = useState<{ id: string; algorithm: AlgorithmDefinition | null } | null>(null);
 
   useEffect(() => {
-    setAlgorithm(null); 
-    loadAlgorithm(algorithmId).then((loadedAlgo) => {
-      setAlgorithm(loadedAlgo);
-    });
+    let cancelled = false;
+    loadAlgorithm(algorithmId)
+      .catch(() => null)
+      .then((loadedAlgo) => {
+        if (!cancelled) setLoaded({ id: algorithmId, algorithm: loadedAlgo });
+      });
+    return () => { cancelled = true; };
   }, [algorithmId]);
 
-  if (!algorithm) return (
+  if (!loaded || loaded.id !== algorithmId) return (
     <div className="w-full aspect-video flex items-center justify-center text-slate-500 animate-pulse bg-slate-900 rounded-lg border border-slate-800">
       Cargando lógica del algoritmo...
     </div>
   );
 
-  return <RunnerInternal algorithm={algorithm} />;
+  if (!loaded.algorithm) return (
+    <div className="w-full aspect-video flex flex-col items-center justify-center bg-slate-900 rounded-lg border border-slate-800">
+      <p className="text-red-400 font-bold mb-2">Algoritmo no encontrado</p>
+      <p className="text-slate-500 text-sm">No existe un algoritmo con el id &quot;{algorithmId}&quot;.</p>
+    </div>
+  );
+
+  return <RunnerInternal key={loaded.id} algorithm={loaded.algorithm} />;
 }
 
 function RunnerInternal({ algorithm }: { algorithm: AlgorithmDefinition }) {
@@ -123,7 +127,7 @@ function RunnerInternal({ algorithm }: { algorithm: AlgorithmDefinition }) {
            <div className="text-center">
              <p className="text-red-400 font-bold mb-2">Visualizador no encontrado</p>
              <p className="text-slate-500 text-sm">
-               El tipo '{algorithm.visualizer}' no tiene un componente asignado.
+               El tipo &quot;{algorithm.visualizer}&quot; no tiene un componente asignado.
              </p>
            </div>
         )}

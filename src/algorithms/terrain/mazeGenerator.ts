@@ -21,7 +21,7 @@ const mazeGenerator: AlgorithmDefinition<number[][]> = {
   },
 
   run: function* (input: number[][]) {
-    let map = input.map(row => [...row]);
+    const map = input.map(row => [...row]);
     const n = map.length;
     
     // Directions: Up, Right, Down, Left (jumping 2 cells)

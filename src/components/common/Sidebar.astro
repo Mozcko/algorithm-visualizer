@@ -1,6 +1,7 @@
 ---
 // src/components/common/Sidebar.astro
 import type { AlgorithmDefinition } from '../../algorithms/types';
+import { categorySlug } from '../../utils/slug';
 
 // 1. Escanear todos los archivos .ts dentro de algorithms
 // Nota: Astro.glob es la forma nativa de importar archivos dinámicamente
@@ -35,11 +36,9 @@ const { currentId } = Astro.props;
   
   <nav class="flex-1 overflow-y-auto py-4 scrollbar-thin scrollbar-thumb-slate-700">
     {Object.entries(groupedAlgorithms).map(([category, algos]) => {
-      // ... keep existing code ...
       const isCategoryOpen = algos.some(algo => algo.id === currentId);
       return (
         <details class="mb-2 group" open={isCategoryOpen}>
-             {/* ... keep existing summary and list ... */}
              <summary class="px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-widest cursor-pointer hover:text-slate-300 flex justify-between items-center list-none outline-none select-none">
             <span>{category}</span>
             <svg 
@@ -55,7 +54,7 @@ const { currentId } = Astro.props;
             {algos.map((algo) => (
               <li>
                <a 
-                  href={`/${algo.category.toLowerCase()}/${algo.id}`}
+                  href={`/${categorySlug(algo.category)}/${algo.id}`}
                   class:list={[
                     "block px-4 py-2 text-sm hover:bg-slate-800 hover:text-white transition-colors border-l-2",
                     algo.id === currentId 

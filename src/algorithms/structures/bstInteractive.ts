@@ -16,6 +16,10 @@ class BSTNode {
   }
 }
 
+// Profundidad máxima: niveles más profundos se saldrían del canvas (viewBox 800x400)
+// o se encimarían (el offset horizontal se divide a la mitad en cada nivel)
+const MAX_DEPTH = 4;
+
 // Helper: Lógico -> Visual
 const generateGraph = (root: BSTNode | null, activeIds: string[] = []): GraphState => {
   const nodes: GraphNode[] = [];
@@ -37,15 +41,15 @@ const generateGraph = (root: BSTNode | null, activeIds: string[] = []): GraphSta
 
     if (node.left) {
       edges.push({ from: node.id, to: node.left.id });
-      traverse(node.left, x - offset, y + 60, offset / 1.6);
+      traverse(node.left, x - offset, y + 60, offset / 2);
     }
     if (node.right) {
       edges.push({ from: node.id, to: node.right.id });
-      traverse(node.right, x + offset, y + 60, offset / 1.6);
+      traverse(node.right, x + offset, y + 60, offset / 2);
     }
   };
 
-  traverse(root, 400, 50, 180);
+  traverse(root, 400, 50, 190);
   return { nodes, edges, isDirected: true };
 };
 
@@ -65,6 +69,8 @@ const bstInteractive: AlgorithmDefinition<BSTNode | null> = {
 
   generateInput: () => null,
 
+  visualize: (root) => generateGraph(root),
+
   methods: {
     // Definimos explícitamente el tipo de retorno del generador para cumplir con la interfaz
     insert: function* (root: BSTNode | null, value: number): Generator<SimulationStep<BSTNode | null>, void, unknown> {
@@ -74,39 +80,36 @@ const bstInteractive: AlgorithmDefinition<BSTNode | null> = {
 
       // CASO 1: Árbol Vacío
       if (!root) {
-        // Truco: TypeScript espera que 'data' sea BSTNode | null | VisualState.
-        // Aquí devolvemos el estado visual del nuevo nodo.
+        // El hook 'useAlgorithmRunner' ignora los GraphState al actualizar el estado lógico,
+        // así que para pasar de null a un árbol debemos emitir el OBJETO real (T) una vez.
+        // Va primero para que el último paso (el que queda en pantalla) sea el dibujo.
+        yield {
+             data: newNode,
+             description: 'State Initialized'
+        };
         yield { 
             data: generateGraph(newNode, [newNode.id]), 
             description: `Tree empty. ${value} becomes Root.` 
         };
-        // Y aquí actualizamos el estado lógico retornando el objeto real en el último paso (opcional, pero buena práctica)
-        // Ojo: En el hook 'useAlgorithmRunner', el último yield.data se convierte en el nuevo estado.
-        // Como 'generateGraph' devuelve GraphState y nuestro estado es BSTNode, tenemos un conflicto lógico en el hook.
-        
-        // CORRECCIÓN CRÍTICA DE LÓGICA + TIPOS:
-        // El hook usa 'data' para actualizar 'logicalStateRef'.
-        // Si devolvemos GraphState, corrompemos el estado lógico.
-        // SOLUCIÓN: El hook debe diferenciar visualización de estado lógico.
-        // PERO para no reescribir el hook complejo ahora: 
-        // Vamos a asumir que el algoritmo muta el objeto 'root' por referencia (lo cual hace).
-        // Y para el caso inicial (null -> objeto), necesitamos devolver el OBJETO real al menos una vez.
-        
-        yield {
-             data: newNode, // Aquí devolvemos el T (BSTNode) para inicializar el estado
-             description: 'State Initialized'
-        };
+        yield { data: generateGraph(newNode), description: 'Ready' };
         return;
       }
 
       // CASO 2: Inserción Normal
       let current = root;
+      let depth = 0;
       
       while (true) {
         yield { 
             data: generateGraph(root, [current.id]), 
             description: `Comparing ${value} vs ${current.value}` 
         };
+
+        const next = value < current.value ? current.left : current.right;
+        if (!next && depth + 1 > MAX_DEPTH) {
+            yield { data: generateGraph(root), description: `Max depth (${MAX_DEPTH}) reached. ${value} not inserted.` };
+            return;
+        }
 
         if (value < current.value) {
             if (!current.left) {
@@ -115,6 +118,7 @@ const bstInteractive: AlgorithmDefinition<BSTNode | null> = {
                 break;
             }
             current = current.left;
+            depth++;
         } else {
              if (!current.right) {
                 current.right = newNode; // Mutación
@@ -122,6 +126,7 @@ const bstInteractive: AlgorithmDefinition<BSTNode | null> = {
                 break;
             }
             current = current.right;
+            depth++;
         }
       }
       

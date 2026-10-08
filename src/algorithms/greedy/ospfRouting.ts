@@ -22,8 +22,9 @@ const ospfRouting: AlgorithmDefinition<GraphState> = {
 
     // 2. Place other routers with Collision Detection
     for (let i = 1; i < nodeCount; i++) {
-        let x = 0, y = 0;
-        let overlapping = false;
+        let x: number;
+        let y: number;
+        let overlapping: boolean;
         let attempts = 0;
 
         // Try up to 50 times to find a free spot

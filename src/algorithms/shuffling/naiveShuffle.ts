@@ -10,8 +10,8 @@ const naiveShuffle: AlgorithmDefinition<number[]> = {
   generateInput: (size = 20) => Array.from({ length: size }, (_, i) => Math.floor((i / (size - 1)) * 90) + 5),
   
   run: function* (input: number[]) {
-    let arr = [...input];
-    let n = arr.length;
+    const arr = [...input];
+    const n = arr.length;
 
     yield { 
         data: [...arr], 
@@ -21,7 +21,7 @@ const naiveShuffle: AlgorithmDefinition<number[]> = {
     for (let i = 0; i < n; i++) {
       // THE MISTAKE: Picking a random index from the ENTIRE array (0 to n)
       // instead of just the remaining portion.
-      let j = Math.floor(Math.random() * n);
+      const j = Math.floor(Math.random() * n);
 
       yield { 
           data: [...arr], 

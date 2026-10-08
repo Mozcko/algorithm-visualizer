@@ -10,8 +10,8 @@ const insertionSort: AlgorithmDefinition<number[]> = {
   generateInput: (size = 20) => Array.from({ length: size }, () => Math.floor(Math.random() * 80) + 10),
   
   run: function* (input: number[]) {
-    let arr = [...input];
-    let n = arr.length;
+    const arr = [...input];
+    const n = arr.length;
 
     yield { 
         data: [...arr], 
@@ -19,7 +19,7 @@ const insertionSort: AlgorithmDefinition<number[]> = {
     };
 
     for (let i = 1; i < n; i++) {
-      let key = arr[i];
+      const key = arr[i];
       let j = i - 1;
 
       yield { 

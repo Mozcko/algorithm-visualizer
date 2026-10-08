@@ -10,7 +10,7 @@ const cocktailShakerSort: AlgorithmDefinition<number[]> = {
   generateInput: (size = 20) => Array.from({ length: size }, () => Math.floor(Math.random() * 80) + 10),
   
   run: function* (input: number[]) {
-    let arr = [...input];
+    const arr = [...input];
     let start = 0;
     let end = arr.length - 1;
     let swapped = true;

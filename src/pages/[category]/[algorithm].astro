@@ -1,8 +1,9 @@
 ---
-// src/pages/[category]/[id].astro
+// src/pages/[category]/[algorithm].astro
 import MainLayout from "../../layouts/Layout.astro";
 import type { AlgorithmDefinition } from "../../algorithms/types";
 import AlgorithmRunner from "../../components/AlgorithmRunner"; // Importa el nuevo componente
+import { categorySlug } from "../../utils/slug";
 
 // 1. Generar rutas estáticas basadas en los archivos existentes
 export async function getStaticPaths() {
@@ -10,12 +11,12 @@ export async function getStaticPaths() {
     eager: true,
   });
   const algorithms = Object.values(algorithmsImport)
-    .map((mod: any) => mod.default as AlgorithmDefinition)
-    .filter((algo) => algo && algo.category);
+    .map((mod) => (mod as { default?: AlgorithmDefinition }).default)
+    .filter((algo): algo is AlgorithmDefinition => Boolean(algo && algo.category));
 
   return algorithms.map((algo) => ({
     params: {
-      category: algo.category.toLowerCase(),
+      category: categorySlug(algo.category),
       algorithm: algo.id,
     },
     props: { algorithm: algo },

@@ -51,11 +51,13 @@ const graphColoring: AlgorithmDefinition<GraphState> = {
 
     // Generate Edges
     for (let i = 0; i < nodeCount; i++) {
-        let next = (i + 1) % nodeCount;
+        const next = (i + 1) % nodeCount;
         edges.push({ from: String(i), to: String(next) });
 
         for (let j = i + 2; j < nodeCount; j++) {
-            if (j !== next && Math.random() > 0.55) { // Adjusted probability
+            // (0, n-1) is already a ring edge, added when i = n-1
+            const isRingEdge = i === 0 && j === nodeCount - 1;
+            if (j !== next && !isRingEdge && Math.random() > 0.55) { // Adjusted probability
                  edges.push({ from: String(i), to: String(j) });
             }
         }
@@ -114,8 +116,11 @@ const graphColoring: AlgorithmDefinition<GraphState> = {
         return false;
     }
 
-    yield* solve(0);
-    yield { data: copyGraph(), description: 'Finished!' };
+    const solved = yield* solve(0);
+    yield { 
+        data: copyGraph(), 
+        description: solved ? 'Finished! Valid coloring found.' : `No valid coloring exists with ${m} colors.` 
+    };
   }
 };
 

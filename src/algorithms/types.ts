@@ -88,4 +88,8 @@ export interface AlgorithmDefinition<T = unknown> {
   run?: (input: T) => Generator<SimulationStep<T>, void, unknown>;
   
   generateInput: (size?: number) => T;
+
+  // Proyección del estado lógico a algo dibujable (modo interactivo).
+  // Permite mostrar el estado inicial antes de ejecutar el primer comando.
+  visualize?: (state: T) => VisualState;
 }

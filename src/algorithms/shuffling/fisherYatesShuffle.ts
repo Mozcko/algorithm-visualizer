@@ -11,8 +11,8 @@ const fisherYatesShuffle: AlgorithmDefinition<number[]> = {
   generateInput: (size = 20) => Array.from({ length: size }, (_, i) => Math.floor((i / (size - 1)) * 90) + 5),
   
   run: function* (input: number[]) {
-    let arr = [...input];
-    let n = arr.length;
+    const arr = [...input];
+    const n = arr.length;
 
     yield { 
         data: [...arr], 
@@ -22,7 +22,7 @@ const fisherYatesShuffle: AlgorithmDefinition<number[]> = {
     // Iterate from the last element down to the second element
     for (let i = n - 1; i > 0; i--) {
       // Pick a random index from 0 to i
-      let j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(Math.random() * (i + 1));
 
       yield { 
           data: [...arr], 

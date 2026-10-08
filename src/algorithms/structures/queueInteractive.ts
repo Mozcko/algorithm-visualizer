@@ -2,6 +2,9 @@ import type { AlgorithmDefinition, GraphState, GraphNode, GraphEdge } from '../t
 
 type QueueState = number[];
 
+// Capacidad máxima: más nodos se saldrían del canvas (viewBox 800x400)
+const MAX_SIZE = 10;
+
 // Helper: Fila horizontal
 const generateGraph = (queue: number[], activeIndices: number[] = []): GraphState => {
   const nodes: GraphNode[] = [];
@@ -53,9 +56,16 @@ const queueInteractive: AlgorithmDefinition<QueueState> = {
 
   generateInput: () => [10, 20, 30], // Iniciamos con datos para que se vea bonito
 
+  visualize: (queue) => generateGraph(queue),
+
   methods: {
     enqueue: function* (queue: QueueState, value: number) {
       if (value === undefined) return;
+
+      if (queue.length >= MAX_SIZE) {
+        yield { data: generateGraph(queue), description: `Queue is full! (Max ${MAX_SIZE})` };
+        return;
+      }
       
       queue.push(value);
       const newIdx = queue.length - 1;

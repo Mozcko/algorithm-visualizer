@@ -1,6 +1,7 @@
 // src/hooks/useAlgorithmRunner.ts
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { AlgorithmDefinition, SimulationStep } from '../algorithms/types';
+import { isGraphState, isGridState } from '../utils/stateGuards';
 
 export function useAlgorithmRunner<T>(algorithm: AlgorithmDefinition<T>) {
   // --- Estados ---
@@ -46,8 +47,9 @@ export function useAlgorithmRunner<T>(algorithm: AlgorithmDefinition<T>) {
       }
     } else {
       // Modo Interactivo
+      // Si el algoritmo sabe dibujar su estado lógico, mostramos eso desde el inicio
       setCurrentStep({ 
-          data: initialData, 
+          data: algorithm.visualize ? algorithm.visualize(initialData) : initialData, 
           description: 'Ready' 
       });
       generatorRef.current = null;
@@ -96,15 +98,9 @@ export function useAlgorithmRunner<T>(algorithm: AlgorithmDefinition<T>) {
     // Esto es crucial: Algunos algoritmos devuelven una proyección visual (GraphState)
     // en lugar del objeto real. No queremos sobrescribir nuestro Árbol con un dibujo.
     if (value.data) {
-        const data: any = value.data;
-        
-        // Detectamos si es un objeto visual (Heurística simple)
-        const isGraph = data.nodes && Array.isArray(data.nodes) && data.edges;
-        const isGrid = Array.isArray(data) && Array.isArray(data[0]) && 'row' in data[0][0];
-
         // Solo actualizamos el estado lógico si NO parece ser un estado puramente visual
         // O si es la primera inicialización de un objeto (cuando T y visual coinciden o son null)
-        if (!isGraph && !isGrid) {
+        if (!isGraphState(value.data) && !isGridState(value.data)) {
             logicalStateRef.current = value.data as T;
         }
     }

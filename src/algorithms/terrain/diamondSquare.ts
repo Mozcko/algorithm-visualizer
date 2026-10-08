@@ -29,7 +29,7 @@ const diamondSquare: AlgorithmDefinition<number[][]> = {
     // Deep copy helper
     const getGrid = () => map.map(row => [...row]);
 
-    let map = input.map(row => [...row]);
+    const map = input.map(row => [...row]);
     const n = map.length;
     
     // 1. Initialize Corners
@@ -62,7 +62,8 @@ const diamondSquare: AlgorithmDefinition<number[][]> = {
                 // Add random jitter
                 const jitter = (Math.random() - 0.5) * roughness;
                 
-                map[y + half][x + half] = Math.max(0, Math.min(100, avg + jitter));
+                // Cap at 99: exactly 100 is reserved by Terrain3D for flat walls
+                map[y + half][x + half] = Math.max(0, Math.min(99, avg + jitter));
             }
         }
 
@@ -93,7 +94,7 @@ const diamondSquare: AlgorithmDefinition<number[][]> = {
                 const avg = sum / count;
                 const jitter = (Math.random() - 0.5) * roughness;
 
-                map[y][x] = Math.max(0, Math.min(100, avg + jitter));
+                map[y][x] = Math.max(0, Math.min(99, avg + jitter));
             }
         }
 

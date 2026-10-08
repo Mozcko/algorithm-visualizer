@@ -6,12 +6,6 @@ interface Props {
 }
 
 export const Terrain3D: React.FC<Props> = ({ terrain }) => {
-  if (!terrain || !terrain.length) return null;
-
-  const size = terrain.length;
-  // Adjusted sizes to be a bit more compact
-  const cellSize = size > 33 ? 8 : (size > 17 ? 16 : 24);
-
   // --- ROTATION STATE ---
   const [rotX, setRotX] = useState(60); 
   const [rotZ, setRotZ] = useState(-45); 
@@ -50,6 +44,13 @@ export const Terrain3D: React.FC<Props> = ({ terrain }) => {
   };
 
   const handleMouseUp = () => setIsDragging(false);
+
+  // Early return must stay below the hooks (Rules of Hooks)
+  if (!terrain || !terrain.length) return null;
+
+  const size = terrain.length;
+  // Adjusted sizes to be a bit more compact
+  const cellSize = size > 33 ? 8 : (size > 17 ? 16 : 24);
 
   return (
     <div 
@@ -90,8 +91,7 @@ export const Terrain3D: React.FC<Props> = ({ terrain }) => {
                 let zHeight = 0;
 
                 if (heightVal === 100) { color = '#f8fafc'; zHeight = 50; } 
-                else if (heightVal === 0) { color = '#3b82f6'; zHeight = 0; } 
-                else {
+                else if (heightVal !== 0) {
                     if (heightVal > 20) color = '#fcd34d'; 
                     if (heightVal > 40) color = '#22c55e'; 
                     if (heightVal > 70) color = '#475569'; 

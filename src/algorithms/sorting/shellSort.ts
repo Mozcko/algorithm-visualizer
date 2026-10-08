@@ -10,8 +10,8 @@ const shellSort: AlgorithmDefinition<number[]> = {
   generateInput: (size = 20) => Array.from({ length: size }, () => Math.floor(Math.random() * 80) + 10),
   
   run: function* (input: number[]) {
-    let arr = [...input];
-    let n = arr.length;
+    const arr = [...input];
+    const n = arr.length;
 
     yield { data: [...arr], description: 'Starting Shell Sort' };
 
@@ -22,7 +22,7 @@ const shellSort: AlgorithmDefinition<number[]> = {
       };
       
       for (let i = gap; i < n; i++) {
-        let temp = arr[i];
+        const temp = arr[i];
         let j;
         
         yield { 

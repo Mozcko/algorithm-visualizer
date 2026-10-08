@@ -38,7 +38,7 @@ const astar: AlgorithmDefinition<GridState> = {
   },
 
   run: function* (initialGrid: GridState) {
-    let grid = initialGrid.map(row => row.map(node => ({ 
+    const grid: GridState = initialGrid.map(row => row.map(node => ({ 
       ...node,
       distance: Infinity,
       isVisited: false,

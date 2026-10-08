@@ -27,13 +27,6 @@ const subsetSum: AlgorithmDefinition<number[]> = {
     // --- The Algorithm (Same as before, but using dynamic target) ---
     
     function* backtrack(index: number, currentSum: number, pathIndices: number[]): Generator<any, boolean, any> {
-        // Visual Update
-        yield {
-            data: [...arr],
-            highlightedIndices: [...pathIndices, index],
-            description: `Target: ${target} | Current Sum: ${currentSum} | Checking index ${index} (${arr[index]})`
-        };
-
         if (currentSum === target) {
             yield {
                 data: [...arr],
@@ -44,6 +37,13 @@ const subsetSum: AlgorithmDefinition<number[]> = {
         }
 
         if (index >= arr.length || currentSum > target) return false;
+
+        // Visual Update
+        yield {
+            data: [...arr],
+            highlightedIndices: [...pathIndices, index],
+            description: `Target: ${target} | Current Sum: ${currentSum} | Checking index ${index} (${arr[index]})`
+        };
 
         // Include
         pathIndices.push(index);

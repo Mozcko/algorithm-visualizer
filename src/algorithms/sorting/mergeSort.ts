@@ -10,15 +10,15 @@ const mergeSort: AlgorithmDefinition<number[]> = {
   generateInput: (size = 20) => Array.from({ length: size }, () => Math.floor(Math.random() * 80) + 10),
   
   run: function* (input: number[]) {
-    let arr = [...input];
+    const arr = [...input];
 
     function* merge(l: number, m: number, r: number) {
-        let n1 = m - l + 1;
-        let n2 = r - m;
+        const n1 = m - l + 1;
+        const n2 = r - m;
         
         // Create temp arrays
-        let L = new Array(n1);
-        let R = new Array(n2);
+        const L = new Array(n1);
+        const R = new Array(n2);
         
         for (let i = 0; i < n1; i++) L[i] = arr[l + i];
         for (let j = 0; j < n2; j++) R[j] = arr[m + 1 + j];
@@ -76,7 +76,7 @@ const mergeSort: AlgorithmDefinition<number[]> = {
         if (l >= r) {
             return;
         }
-        let m = l + Math.floor((r - l) / 2);
+        const m = l + Math.floor((r - l) / 2);
         yield* mergeSortHelper(l, m);
         yield* mergeSortHelper(m + 1, r);
         yield* merge(l, m, r);

@@ -19,6 +19,9 @@ class DoublyLinkedList {
   size: number = 0;
 }
 
+// Capacidad máxima: más nodos se saldrían del canvas (viewBox 800x400)
+const MAX_SIZE = 6;
+
 // Convertidor
 const generateGraph = (list: DoublyLinkedList, activeId: string | null = null): GraphState => {
   const nodes: GraphNode[] = [];
@@ -96,8 +99,15 @@ const dllInteractive: AlgorithmDefinition<DoublyLinkedList> = {
     return list;
   },
 
+  visualize: (list) => generateGraph(list),
+
   methods: {
     prepend: function* (list: DoublyLinkedList, value: number) {
+      if (list.size >= MAX_SIZE) {
+        yield { data: generateGraph(list), description: `List is full! (Max ${MAX_SIZE})` };
+        return;
+      }
+
       const newNode = new DLLNode(value);
       
       if (!list.head) {
@@ -118,6 +128,11 @@ const dllInteractive: AlgorithmDefinition<DoublyLinkedList> = {
     },
 
     append: function* (list: DoublyLinkedList, value: number) {
+      if (list.size >= MAX_SIZE) {
+        yield { data: generateGraph(list), description: `List is full! (Max ${MAX_SIZE})` };
+        return;
+      }
+
       const newNode = new DLLNode(value);
       
       if (!list.tail) {

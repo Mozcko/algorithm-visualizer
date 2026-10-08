@@ -46,7 +46,7 @@ const bfs: AlgorithmDefinition<GridState> = {
     // Clonamos la grilla para no mutar la referencia original directamente en React
     // Nota: Para ser puristas deberíamos hacer Deep Copy, pero por rendimiento en demos simples esto suele bastar si tenemos cuidado.
     // Haremos una copia "profunda ligera" para la visualización.
-    let grid = initialGrid.map(row => row.map(node => ({ ...node })));
+    const grid: GridState = initialGrid.map(row => row.map(node => ({ ...node })));
     
     const startNode = grid[1][1];
     const endNode = grid[8][18];
@@ -77,7 +77,7 @@ const bfs: AlgorithmDefinition<GridState> = {
         if (!neighbor.isVisited && !neighbor.isWall) {
           neighbor.isVisited = true;
           neighbor.previousNode = { row: currentNode.row, col: currentNode.col };
-          neighbor.distance = currentNode.distance + 1;
+          neighbor.distance = (currentNode.distance ?? 0) + 1;
           queue.push(neighbor);
           
           // Visualizar que estamos visitando este nodo

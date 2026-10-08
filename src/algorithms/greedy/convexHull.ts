@@ -36,7 +36,7 @@ const convexHull: AlgorithmDefinition<GraphState> = {
     }
 
     let p = leftMost;
-    let hull = [];
+    const hull = [];
 
     // Color the start point
     nodes[p].color = '#22c55e';
@@ -52,6 +52,9 @@ const convexHull: AlgorithmDefinition<GraphState> = {
         return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
     };
 
+    // Helper: Squared distance, used to break ties between collinear points
+    const distSq = (a: any, b: any) => (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
+
     do {
         hull.push(p);
         let q = (p + 1) % n; // Candidate for next point
@@ -66,7 +69,8 @@ const convexHull: AlgorithmDefinition<GraphState> = {
             // If i is more "counter-clockwise" than q, update q
             const val = crossProduct(nodes[p], nodes[i], nodes[q]);
             
-            if (val < 0 || (val === 0 && i !== q)) { // Simplified check logic
+            // On a tie (collinear), keep the farthest point so we never step backwards
+            if (val < 0 || (val === 0 && distSq(nodes[p], nodes[i]) > distSq(nodes[p], nodes[q]))) {
                  q = i;
             }
              
@@ -94,7 +98,7 @@ const convexHull: AlgorithmDefinition<GraphState> = {
 
         p = q;
 
-    } while (p !== leftMost);
+    } while (p !== leftMost && hull.length <= n); // A hull never has more than n points
 
     yield { 
         data: { nodes, edges, isDirected: true }, 

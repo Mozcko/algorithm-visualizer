@@ -10,10 +10,10 @@ const quickSort: AlgorithmDefinition<number[]> = {
   generateInput: (size = 20) => Array.from({ length: size }, () => Math.floor(Math.random() * 80) + 10),
   
   run: function* (input: number[]) {
-    let arr = [...input];
+    const arr = [...input];
 
     function* partition(low: number, high: number): Generator<any, number, any> {
-        let pivot = arr[high];
+        const pivot = arr[high];
         let i = (low - 1);
 
         yield { 
@@ -31,7 +31,7 @@ const quickSort: AlgorithmDefinition<number[]> = {
 
             if (arr[j] < pivot) {
                 i++;
-                let temp = arr[i];
+                const temp = arr[i];
                 arr[i] = arr[j];
                 arr[j] = temp;
                 yield { 
@@ -41,7 +41,7 @@ const quickSort: AlgorithmDefinition<number[]> = {
                 };
             }
         }
-        let temp = arr[i + 1];
+        const temp = arr[i + 1];
         arr[i + 1] = arr[high];
         arr[high] = temp;
 
@@ -56,7 +56,7 @@ const quickSort: AlgorithmDefinition<number[]> = {
 
     function* quickSortHelper(low: number, high: number): Generator<any, void, any> {
         if (low < high) {
-            let pi = yield* partition(low, high);
+            const pi = yield* partition(low, high);
             yield* quickSortHelper(low, pi - 1);
             yield* quickSortHelper(pi + 1, high);
         }

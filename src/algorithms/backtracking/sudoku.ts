@@ -24,8 +24,8 @@ const sudokuSolver: AlgorithmDefinition<GridState> = {
     // D. Remove K digits to make it a puzzle (e.g., remove 40 digits)
     const attempts = 40;
     for(let i=0; i<attempts; i++) {
-        let r = Math.floor(Math.random() * 9);
-        let c = Math.floor(Math.random() * 9);
+        const r = Math.floor(Math.random() * 9);
+        const c = Math.floor(Math.random() * 9);
         board[r][c] = 0;
     }
 
@@ -41,11 +41,6 @@ const sudokuSolver: AlgorithmDefinition<GridState> = {
   },
 
   run: function* (grid: GridState) {
-    // ... (Use the same run function code provided in the previous answer) ...
-    // NOTE: The run logic doesn't change, only the input generation!
-    
-    // Copy/paste the run function from the previous Sudoku response here.
-    // Let me know if you need me to paste it again!
     const n = 9;
     const copyGrid = (g: GridState) => g.map(row => row.map(node => ({ ...node })));
 
@@ -137,7 +132,7 @@ function solveSudokuHelper(board: number[][]): boolean {
 }
 function isSafeHelper(board: number[][], row: number, col: number, num: number) {
     for (let x = 0; x < 9; x++) if (board[row][x] === num || board[x][col] === num) return false;
-    let startRow = row - row % 3, startCol = col - col % 3;
+    const startRow = row - row % 3, startCol = col - col % 3;
     for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) if (board[i + startRow][j + startCol] === num) return false;
     return true;
 }

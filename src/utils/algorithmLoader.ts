@@ -8,10 +8,11 @@ export async function loadAlgorithm(id: string): Promise<AlgorithmDefinition | n
   // Buscamos en los archivos importados aquel que coincida con el ID
   for (const path in algorithmsImport) {
     // Importamos el módulo dinámicamente
-    const module = await algorithmsImport[path]() as any;
-    const algo = module.default as AlgorithmDefinition;
-    
-    if (algo.id === id) {
+    const module = (await algorithmsImport[path]()) as { default?: AlgorithmDefinition };
+    const algo = module.default;
+
+    // Archivos sin export default (ej: types.ts) no son algoritmos
+    if (algo?.id === id) {
       return algo;
     }
   }

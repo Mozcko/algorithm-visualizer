@@ -32,14 +32,14 @@ const riffleShuffle: AlgorithmDefinition<number[]> = {
             description: `Riffle ${r}: Cutting deck at index ${cutPoint}`
         };
 
-        let newArr: number[] = [];
+        const newArr: number[] = [];
         let l = 0;
         let ri = 0;
 
         // Interleave
         while (l < left.length || ri < right.length) {
             // Probability based on remaining cards in each stack
-            let pickLeft = false;
+            let pickLeft: boolean;
             if (l < left.length && ri < right.length) {
                 const leftSize = left.length - l;
                 const rightSize = right.length - ri;

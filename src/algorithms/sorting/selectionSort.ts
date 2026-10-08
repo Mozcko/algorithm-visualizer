@@ -10,8 +10,8 @@ const selectionSort: AlgorithmDefinition<number[]> = {
   generateInput: (size = 20) => Array.from({ length: size }, () => Math.floor(Math.random() * 80) + 10),
   
   run: function* (input: number[]) {
-    let arr = [...input];
-    let n = arr.length;
+    const arr = [...input];
+    const n = arr.length;
 
     yield { 
         data: [...arr], 
@@ -39,7 +39,7 @@ const selectionSort: AlgorithmDefinition<number[]> = {
       }
 
       if (minIdx !== i) {
-        let temp = arr[i];
+        const temp = arr[i];
         arr[i] = arr[minIdx];
         arr[minIdx] = temp;
 

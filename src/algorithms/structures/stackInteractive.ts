@@ -3,6 +3,9 @@ import type { AlgorithmDefinition, GraphState, GraphNode, GraphEdge } from '../t
 // El estado lógico es simplemente un array de números
 type StackState = number[];
 
+// Capacidad máxima: más nodos se saldrían del canvas (viewBox 800x400)
+const MAX_SIZE = 7;
+
 // Helper: Convierte el array en una torre vertical visual
 const generateGraph = (stack: number[], activeIndex: number = -1): GraphState => {
   const nodes: GraphNode[] = [];
@@ -55,9 +58,16 @@ const stackInteractive: AlgorithmDefinition<StackState> = {
 
   generateInput: () => [], // Inicia vacía
 
+  visualize: (stack) => generateGraph(stack),
+
   methods: {
     push: function* (stack: StackState, value: number) {
       if (value === undefined) return;
+
+      if (stack.length >= MAX_SIZE) {
+        yield { data: generateGraph(stack), description: `Stack Overflow! (Max ${MAX_SIZE})` };
+        return;
+      }
       
       // Mutación del estado lógico
       stack.push(value);

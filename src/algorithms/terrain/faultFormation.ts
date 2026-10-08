@@ -8,8 +8,7 @@ const faultFormation: AlgorithmDefinition<number[][]> = {
   description: 'Simulates geological activity by repeatedly slicing the terrain with random "fault lines". One side of the line is uplifted, and the other is depressed, eventually forming distinct mountain ranges and valleys.',
 
   controls: [
-      { type: 'input-number', label: 'Size', id: 'size', defaultValue: 20 },
-      { type: 'input-number', label: 'Iterations', id: 'iterations', defaultValue: 100 }
+      { type: 'input-number', label: 'Size', id: 'size', defaultValue: 20 }
   ],
 
   generateInput: (val = 20) => {
@@ -19,14 +18,15 @@ const faultFormation: AlgorithmDefinition<number[][]> = {
   },
 
   run: function* (input: number[][]) {
-    let map = input.map(row => [...row]);
+    const map = input.map(row => [...row]);
     const n = map.length;
-    // We can infer iterations from controls or hardcode a sensible default relative to size
+    // Number of faults scales with the grid size
     const iterations = 60 + (n * 2); 
 
     const copyGrid = () => map.map(row => [...row]);
 
-    // Helper: Normalize values to keep them between 0 and 100
+    // Helper: Normalize values to keep them between 0 and 99
+    // (exactly 100 is reserved by Terrain3D for flat walls)
     const normalize = () => {
         let min = Infinity, max = -Infinity;
         for(let r=0; r<n; r++) for(let c=0; c<n; c++) {
@@ -37,7 +37,7 @@ const faultFormation: AlgorithmDefinition<number[][]> = {
         if (max === min) return;
         
         for(let r=0; r<n; r++) for(let c=0; c<n; c++) {
-            map[r][c] = ((map[r][c] - min) / (max - min)) * 100;
+            map[r][c] = ((map[r][c] - min) / (max - min)) * 99;
         }
     };
 

@@ -6,14 +6,14 @@ interface ControlsProps {
   isPlaying: boolean;
   onTogglePlay: () => void;
   onNext: () => void;
-  onReset: (arg?: any) => void; 
+  onReset: (arg?: number) => void; 
   speed: number;
   onSpeedChange: (val: number) => void;
   stepCount: number;
   
   // Props opcionales para interactividad
   customControls?: AlgorithmControl[];
-  onCommand?: (method: string, args: any[]) => void;
+  onCommand?: (method: string, args: number[]) => void;
 }
 
 export const Controls: React.FC<ControlsProps> = ({
@@ -25,6 +25,13 @@ export const Controls: React.FC<ControlsProps> = ({
   const handleInputChange = (id: string, val: string) => {
     setInputValues(prev => ({ ...prev, [id]: Number(val) }));
   };
+
+  // El primer input numérico declarado es el que alimenta a los botones y al Reset.
+  // Usamos el valor escrito o, si no se ha tocado, el valor por defecto que se muestra.
+  const primaryInput = customControls?.find(ctrl => ctrl.type === 'input-number');
+  const primaryValue = primaryInput
+    ? (inputValues[primaryInput.id] ?? primaryInput.defaultValue)
+    : undefined;
 
   return (
     <div className="flex flex-col gap-3 w-full">
@@ -51,8 +58,7 @@ export const Controls: React.FC<ControlsProps> = ({
                        <button
                            key={ctrl.id}
                            onClick={() => {
-                               const val = inputValues['value']; 
-                               const arg = val !== undefined ? val : Math.floor(Math.random() * 100);
+                               const arg = primaryValue !== undefined ? primaryValue : Math.floor(Math.random() * 100);
                                onCommand?.(ctrl.method!, [arg]);
                            }}
                            disabled={isPlaying}
@@ -95,10 +101,7 @@ export const Controls: React.FC<ControlsProps> = ({
 
         {/* Botón Reset - Pushed to right on desktop */}
         <button
-            onClick={() => {
-                const values = Object.values(inputValues);
-                onReset(values.length > 0 ? values[0] : undefined);
-            }}
+            onClick={() => onReset(primaryValue)}
             className="px-3 py-2 bg-red-900/50 hover:bg-red-800 text-red-200 border border-red-800 rounded transition-colors ml-auto sm:ml-0"
         >
             Reset

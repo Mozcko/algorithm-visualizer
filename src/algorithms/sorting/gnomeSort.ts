@@ -10,9 +10,9 @@ const gnomeSort: AlgorithmDefinition<number[]> = {
   generateInput: (size = 20) => Array.from({ length: size }, () => Math.floor(Math.random() * 80) + 10),
   
   run: function* (input: number[]) {
-    let arr = [...input];
+    const arr = [...input];
     let index = 0;
-    let n = arr.length;
+    const n = arr.length;
 
     yield { data: [...arr], description: 'Starting Gnome Sort' };
 

@@ -11,8 +11,8 @@ const bubbleSort: AlgorithmDefinition<number[]> = {
   generateInput: (size = 20) => Array.from({ length: size }, () => Math.floor(Math.random() * 80) + 10),
   
   run: function* (input: number[]) {
-    let arr = [...input];
-    let n = arr.length;
+    const arr = [...input];
+    const n = arr.length;
     let swapped;
 
     yield { 
@@ -33,7 +33,7 @@ const bubbleSort: AlgorithmDefinition<number[]> = {
 
         if (arr[j] > arr[j + 1]) {
           // Swap logic
-          let temp = arr[j];
+          const temp = arr[j];
           arr[j] = arr[j + 1];
           arr[j + 1] = temp;
           swapped = true;
