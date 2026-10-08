@@ -88,6 +88,15 @@ function RunnerInternal({ algorithm }: { algorithm: AlgorithmDefinition }) {
     // Responsive Gap: gap-4 on mobile, gap-6 on larger screens
     <div className="w-full flex flex-col gap-4 sm:gap-6">
       
+      <div className="relative flex flex-col gap-2">
+
+      {/* Descripción: bloque propio en móvil (no tapa la visualización), overlay desde md */}
+      {/* min-h reserva dos líneas para que la visualización no salte entre pasos */}
+      <div className="min-h-20 md:min-h-0 md:absolute md:top-4 md:left-4 md:z-20 bg-slate-950/90 text-blue-200 px-4 py-2 rounded-md text-sm border border-blue-900/50 shadow-lg backdrop-blur-sm">
+         <span className="text-xs text-slate-500 uppercase font-bold block mb-1">Estado Actual</span>
+         {currentStep.description || "Listo"}
+      </div>
+
       {/* --- AREA DE VISUALIZACIÓN --- */}
       {/* Responsive Aspect Ratio: aspect-square (mobile) -> aspect-video (desktop) */}
       <div className="w-full aspect-square md:aspect-video bg-slate-900 rounded-lg border border-slate-800 flex flex-col items-center justify-center relative overflow-hidden p-2 sm:p-4 shadow-inner">
@@ -132,11 +141,7 @@ function RunnerInternal({ algorithm }: { algorithm: AlgorithmDefinition }) {
            </div>
         )}
 
-        {/* Overlay de Descripción */}
-        <div className="absolute top-4 left-4 bg-slate-950/90 text-blue-200 px-4 py-2 rounded-md text-sm border border-blue-900/50 shadow-lg backdrop-blur-sm z-20">
-           <span className="text-xs text-slate-500 uppercase font-bold block mb-1">Estado Actual</span>
-           {currentStep.description || "Listo"}
-        </div>
+      </div>
       </div>
 
       {/* --- CONTROLES --- */}

@@ -54,7 +54,7 @@ export const Terrain3D: React.FC<Props> = ({ terrain }) => {
 
   return (
     <div 
-        className={`w-full h-full flex items-center justify-center overflow-hidden bg-slate-900 perspective-[1000px] select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+        className={`w-full h-full flex items-center justify-center overflow-hidden bg-slate-900 perspective-[1000px] select-none touch-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -127,7 +127,7 @@ export const Terrain3D: React.FC<Props> = ({ terrain }) => {
          <button 
             onClick={() => setIsAutoRotating(!isAutoRotating)}
             className={`
-                pointer-events-auto px-3 py-1 rounded text-xs font-bold uppercase tracking-wider transition-colors border
+                pointer-events-auto px-3 py-1 min-h-11 sm:min-h-0 rounded text-xs font-bold uppercase tracking-wider transition-colors border
                 ${isAutoRotating 
                     ? 'bg-green-500/20 text-green-400 border-green-500/50 hover:bg-green-500/30' 
                     : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700'}

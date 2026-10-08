@@ -6,6 +6,10 @@ interface Props {
   data: GraphState | null;
 }
 
+// En móvil el viewBox de 800 unidades se reduce a ~40%, así que nodos y pesos
+// se dibujan más grandes para que el texto siga siendo legible.
+const MOBILE_SCALE = 'max-sm:scale-[1.75]';
+
 export const GraphRenderer: React.FC<Props> = ({ data }) => {
   if (!data) return <div className="text-slate-500">Sin datos</div>;
 
@@ -51,20 +55,23 @@ export const GraphRenderer: React.FC<Props> = ({ data }) => {
                 
                 {edge.weight !== undefined && (
                     <g className="animate-pop">
-                        <rect 
-                            x={midX - 10} y={midY - 10} 
-                            width="20" height="20" 
-                            rx="4" fill="#0f172a" 
-                            className="stroke-slate-700" strokeWidth="1"
-                        />
-                        <text 
-                            x={midX} y={midY} 
-                            dy=".35em" 
-                            textAnchor="middle" 
-                            className="fill-slate-300 text-[10px] font-mono font-bold select-none"
-                        >
-                            {edge.weight}
-                        </text>
+                        <g style={{ transform: `translate(${midX}px, ${midY}px)` }}>
+                            <g className={MOBILE_SCALE}>
+                                <rect 
+                                    x={-10} y={-10} 
+                                    width="20" height="20" 
+                                    rx="4" fill="#0f172a" 
+                                    className="stroke-slate-700" strokeWidth="1"
+                                />
+                                <text 
+                                    dy=".35em" 
+                                    textAnchor="middle" 
+                                    className="fill-slate-300 text-[10px] font-mono font-bold select-none"
+                                >
+                                    {edge.weight}
+                                </text>
+                            </g>
+                        </g>
                     </g>
                 )}
             </g>
@@ -78,6 +85,7 @@ export const GraphRenderer: React.FC<Props> = ({ data }) => {
             className="transition-spring"
             style={{ transform: `translate(${node.x}px, ${node.y}px)` }}
           >
+           <g className={MOBILE_SCALE}>
             {node.color === '#22c55e' && (
                 <circle r="28" className="fill-green-500/20 animate-pulse" />
             )}
@@ -98,6 +106,7 @@ export const GraphRenderer: React.FC<Props> = ({ data }) => {
             >
               {node.value}
             </text>
+           </g>
           </g>
         ))}
       </svg>
