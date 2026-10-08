@@ -5,8 +5,9 @@ Four renderers, one per `VisualizerType`. Each is a pure function of the current
 guards the data first (see `components.md`). A failed guard shows a grey placeholder, never
 an error.
 
-The viewport they draw into is `aspect-square` on mobile and `aspect-video` from `md` up,
-with a description overlay in the top-left corner that can cover content there.
+The viewport they draw into is `aspect-square` on mobile and `aspect-video` from `md` up.
+From `md` up a description overlay sits in the top-left corner and can cover content there;
+below `md` the description is a separate block above the viewport.
 
 ## `bar-chart` — `BarChartRenderer`, inline in `AlgorithmRunner.tsx`
 
@@ -33,7 +34,7 @@ Cell background, first match wins:
 6. `isVisited` — translucent blue
 7. otherwise a subtle checkerboard
 
-`value` renders as centred bold text that scales with breakpoints (8px, `xs`, `xl`).
+`value` renders as centred bold text: `xs` by default, `xl` from `md` up.
 Truthiness is used, so a numeric `0` would not render; algorithms use `''` for empty.
 
 Sizing: the grid div gets `aspect-ratio: cols / rows`. Grids wider than 1.6:1 (the 10 x 20
@@ -72,6 +73,11 @@ makes them remount.
 | `color === '#22c55e'` | pulsing green halo behind the node |
 | `value` | centred label; use `''` for unlabeled points |
 
+Below the `sm` breakpoint node contents and weight boxes are scaled 1.75x
+(`MOBILE_SCALE`), because the 800-unit viewBox shrinks to about 40% on a phone and labels
+would otherwise render at 4–5px. Positions are unchanged, so closely packed nodes (a heap
+level with 16 nodes, say) can overlap on phones.
+
 The exact hex strings are a contract. Using a different green will not thicken an edge or
 add the halo.
 
@@ -108,7 +114,8 @@ below `99` (diamond-square clamps to it, fault formation normalizes to 0–99).
 Interaction, all local component state:
 
 - Drag with mouse or touch rotates: horizontal drag changes Z rotation, vertical changes X
-  rotation clamped to 0–90 degrees. Starting angles are 60 and -45.
+  rotation clamped to 0–90 degrees. Starting angles are 60 and -45. The container is
+  `touch-none`, so a touch drag rotates instead of scrolling the page.
 - A "Rotate" button in the bottom-right toggles auto-rotation via `requestAnimationFrame`.
   Auto-rotation pauses while dragging.
 

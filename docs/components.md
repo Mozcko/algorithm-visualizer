@@ -43,8 +43,9 @@ local and rejects an empty array.
 Interactive structures define `visualize`, so their initial state is drawn on load. One
 without it would sit on the `primitive-graph` placeholder until its first command.
 
-Over the viewport, top-left, sits the "Estado Actual" overlay showing
-`currentStep.description` or "Listo".
+The "Estado Actual" box shows `currentStep.description` or "Listo". From `md` up it is an
+overlay in the viewport's top-left corner; below `md` it is its own block above the
+viewport, with a two-line minimum height so the viewport does not jump between steps.
 
 The file also contains the inline `BarChartRenderer`.
 
@@ -90,6 +91,9 @@ anywhere.
   right shortens the interval. Default speed 500 puts the thumb just right of centre.
 - **Step counter** — one copy for `sm+` inside the row, one centred below for mobile.
 
+Buttons and the number field in both rows are `min-h-11` (44px) below `sm` for touch; the
+slider track is not.
+
 `inputValues` lives in this component. Moving between algorithms is a full page
 navigation, so typed values never carry over.
 
@@ -115,5 +119,9 @@ Static home page content: title, three feature cards, and an "Available Categori
 that hardcodes the seven categories plus "More coming soon...". It is not generated from
 the algorithm glob, so a new category has to be added here by hand. No links to
 algorithms; navigation is via the sidebar only.
+
+The root is `grow shrink-0` inside the scrolling `<main>`. Do not give it a fixed height:
+with centred content, a box shorter than its content pushes the title above the scroll
+area on phones.
 
 Copy here is English, unlike the Spanish strings in the runner.

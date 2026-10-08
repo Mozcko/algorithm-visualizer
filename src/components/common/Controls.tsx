@@ -47,7 +47,7 @@ export const Controls: React.FC<ControlsProps> = ({
                             type="number"
                             placeholder={ctrl.label}
                             // Responsive width: full on mobile, fixed on desktop
-                            className="bg-slate-800 text-white px-3 py-2 sm:py-1 rounded border border-slate-600 w-full sm:w-24 text-sm focus:border-blue-500 outline-none"
+                            className="bg-slate-800 text-white px-3 py-2 sm:py-1 min-h-11 sm:min-h-0 rounded border border-slate-600 w-full sm:w-24 text-sm focus:border-blue-500 outline-none"
                             value={inputValues[ctrl.id] !== undefined ? inputValues[ctrl.id] : (ctrl.defaultValue ?? '')}
                             onChange={(e) => handleInputChange(ctrl.id, e.target.value)}
                         />
@@ -62,7 +62,7 @@ export const Controls: React.FC<ControlsProps> = ({
                                onCommand?.(ctrl.method!, [arg]);
                            }}
                            disabled={isPlaying}
-                           className="flex-1 sm:flex-none px-3 py-2 sm:py-1 bg-blue-700 hover:bg-blue-600 text-white text-sm rounded border border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                           className="flex-1 sm:flex-none px-3 py-2 sm:py-1 min-h-11 sm:min-h-0 bg-blue-700 hover:bg-blue-600 text-white text-sm rounded border border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                        >
                            {ctrl.label}
                        </button>
@@ -80,7 +80,7 @@ export const Controls: React.FC<ControlsProps> = ({
         {/* Botón Play/Pause - Grows on mobile */}
         <button
           onClick={onTogglePlay}
-          className={`flex-1 sm:flex-none px-4 py-2 rounded font-bold transition-colors shadow-sm ${
+          className={`flex-1 sm:flex-none px-4 py-2 min-h-11 sm:min-h-0 rounded font-bold transition-colors shadow-sm ${
             isPlaying 
               ? 'bg-amber-600 hover:bg-amber-500 text-white' 
               : 'bg-green-600 hover:bg-green-500 text-white'
@@ -93,7 +93,7 @@ export const Controls: React.FC<ControlsProps> = ({
         <button
             onClick={onNext}
             disabled={isPlaying}
-            className="flex-1 sm:flex-none px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded disabled:opacity-50 text-white transition-colors border border-slate-600"
+            className="flex-1 sm:flex-none px-3 py-2 min-h-11 sm:min-h-0 bg-slate-700 hover:bg-slate-600 rounded disabled:opacity-50 text-white transition-colors border border-slate-600"
             title="Avanzar un paso"
         >
             Step &rarr;
@@ -102,7 +102,7 @@ export const Controls: React.FC<ControlsProps> = ({
         {/* Botón Reset - Pushed to right on desktop */}
         <button
             onClick={() => onReset(primaryValue)}
-            className="px-3 py-2 bg-red-900/50 hover:bg-red-800 text-red-200 border border-red-800 rounded transition-colors ml-auto sm:ml-0"
+            className="px-3 py-2 min-h-11 sm:min-h-0 bg-red-900/50 hover:bg-red-800 text-red-200 border border-red-800 rounded transition-colors ml-auto sm:ml-0"
         >
             Reset
         </button>

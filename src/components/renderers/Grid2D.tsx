@@ -59,7 +59,7 @@ export const Grid2D: React.FC<Props> = ({ grid }) => {
                 >
                   {/* Text scales cleanly: hidden on tiny grids, visible on Sudoku */}
                   {node.value && (
-                    <span className="text-[8px] sm:text-xs md:text-xl font-bold animate-in zoom-in select-none">
+                    <span className="text-xs md:text-xl font-bold animate-in zoom-in select-none">
                         {node.value}
                     </span>
                   )}
